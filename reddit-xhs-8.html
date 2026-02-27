@@ -293,7 +293,7 @@
             try {
                 const proxyUrl = "https://corsproxy.io/?";
                 // 添加 _cb 参数（时间戳）防止缓存，limit 设置为 15 增加样本量
-                const redditUrl = `https://www.reddit.com/r/${sub}/hot.json?limit=15&_cb=${Date.now()}`;
+                const redditUrl = `https://www.reddit.com/r/${sub}/top.json?limit=15&t=year}`;
 
                 const response = await fetch(proxyUrl + encodeURIComponent(redditUrl));
                 const data = await response.json();
@@ -306,7 +306,7 @@
                 const randomIndex = Math.floor(Math.random() * Math.min(posts.length, 10));
                 const post = posts[randomIndex].data;
 
-                const commUrl = `https://www.reddit.com/r/${sub}/comments/${post.id}.json?limit=8&_cb=${Date.now()}`;
+                const commUrl = `https://www.reddit.com/r/${sub}/comments/${post.id}.json?limit=8}`;
                 const commRes = await fetch(proxyUrl + encodeURIComponent(commUrl));
                 const commData = await commRes.json();
 
@@ -314,8 +314,9 @@
                 // 过滤掉 AutoModerator 或太短的评论，并随机选 3 条
                 const validComments = rawComments
                     .filter(c => c.kind === 't1' && c.data.author !== 'AutoModerator' && c.data.body.length > 20)
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 3);
+                    // .sort(() => Math.random() - 0.5)
+                    .sort((a, b) => b.data.score - a.data.score)
+                    .slice(0, 6);
 
                 contentData.questionEn = post.title;
                 contentData.questionCn = "（请编辑标题翻译）";
